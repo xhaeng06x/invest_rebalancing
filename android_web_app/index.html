@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자산배분 도구</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>💰 자산배분 도구</h1>
+            <p class="subtitle">체계적인 자산 관리의 시작</p>
+        </header>
+
+        <main>
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="card">
+                <h2>📊 현재 자산 현황</h2>
+                <div class="asset-summary">
+                    <div class="summary-item total">
+                        <span class="label">총 자산</span>
+                        <span class="value" id="total-asset">0원</span>
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-item stock">
+                            <span class="label">주식 (Stock)</span>
+                            <span class="value" id="stock-asset">0원</span>
+                            <span class="percent" id="stock-percent">0%</span>
+                        </div>
+                        <div class="summary-item bond">
+                            <span class="label">채권 (Bond)</span>
+                            <span class="value" id="bond-asset">0원</span>
+                            <span class="percent" id="bond-percent">0%</span>
+                        </div>
+                        <div class="summary-item gold">
+                            <span class="label">금 (Gold)</span>
+                            <span class="value" id="gold-asset">0원</span>
+                            <span class="percent" id="gold-percent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Input Section -->
+            <section id="input-section" class="card">
+                <h2>📝 자산 입력</h2>
+                
+                <div class="input-group">
+                    <h3>주식 (Stocks)</h3>
+                    <div id="stock-list">
+                        <!-- Stock items will be added here dynamically -->
+                    </div>
+                    <button class="btn-secondary" onclick="addStockInput()">+ 주식 추가</button>
+                </div>
+
+                <div class="input-group">
+                    <h3>채권 (Bonds)</h3>
+                    <div id="bond-list">
+                        <!-- Bond items will be added here dynamically -->
+                    </div>
+                    <button class="btn-secondary" onclick="addBondInput()">+ 채권 추가</button>
+                </div>
+
+                <div class="input-group">
+                    <h3>금 (Gold)</h3>
+                    <div class="input-item">
+                        <input type="number" id="gold-price" placeholder="금 평가금액">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="calculateAssets()">💾 자산 계산 및 저장</button>
+            </section>
+
+            <!-- Simulation: Rebalancing 1 (Stock Split) -->
+            <section id="rebal-1" class="card">
+                <h2>⚖️ 시뮬레이션 1: 주식 기준</h2>
+                <p class="desc">주식을 기준으로 채권(50%)과 금(16.7%)의 목표 금액을 산출합니다.</p>
+                <div class="result-box">
+                    <div class="result-row">
+                        <span>목표 채권 금액:</span>
+                        <span id="rebal1-bond-target" class="highlight">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span>목표 금 금액:</span>
+                        <span id="rebal1-gold-target" class="highlight">0원</span>
+                    </div>
+                    <hr>
+                    <div class="result-row">
+                        <span>채권 조정 필요:</span>
+                        <span id="rebal1-bond-diff">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span>금 조정 필요:</span>
+                        <span id="rebal1-gold-diff">0원</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Simulation: Rebalancing 2 (Fixed Ratio) -->
+            <section id="rebal-2" class="card">
+                <h2>⚖️ 시뮬레이션 2: 고정 비율</h2>
+                <p class="desc">총 자산 대비 주식 60%, 채권 30%, 금 10% 비율입니다.</p>
+                <div class="result-box">
+                    <div class="result-row">
+                        <span>주식 목표 (60%):</span>
+                        <span id="rebal2-stock-target" class="highlight">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span>채권 목표 (30%):</span>
+                        <span id="rebal2-bond-target" class="highlight">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span>금 목표 (10%):</span>
+                        <span id="rebal2-gold-target" class="highlight">0원</span>
+                    </div>
+                    <hr>
+                    <div class="result-row">
+                        <span>주식 과부족:</span>
+                        <span id="rebal2-stock-diff">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span>채권 과부족:</span>
+                        <span id="rebal2-bond-diff">0원</span>
+                    </div>
+                    <div class="result-row">
+                        <span>금 과부족:</span>
+                        <span id="rebal2-gold-diff">0원</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section class="tools">
+                <button class="btn-danger" onclick="resetData()">🗑️ 데이터 초기화</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>Asset Allocation Tool for Android</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
