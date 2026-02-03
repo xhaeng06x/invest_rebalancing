@@ -112,14 +112,14 @@ void rebal2(money* p_money) {
 void rebal_stock(money*p_money, int *pnum){
     printf("\n\n현재 개별 주식 종목 비중");
     for (int i=0; i<*pnum; i++){
-        printf("\n%s(목표 %d %%) : %ld원, %.2lf %%", p_money->stock1.stock_name[i], p_money->stock1.stock_goal[i], p_money->stock1.stock_price[i], (double)p_money->stock1.stock_price[i]/p_money->all*100);
+        printf("\n%s(목표 %d %%) : %ld원, %.2lf %%\t전체 대비 과부족액 : %lf원", p_money->stock1.stock_name[i], p_money->stock1.stock_goal[i], p_money->stock1.stock_price[i], (double)p_money->stock1.stock_price[i]/p_money->all*100, (double)p_money->all*p_money->stock1.stock_goal[i]/100-p_money->stock1.stock_price[i]);
     }
     printf("\n");
 }
 void rebal_bond(money*p_money, int *pnum){
     printf("\n\n현재 개별 채권 종목 비중");
     for (int i=0; i<*(pnum+1); i++){
-        printf("\n%s(목표 %d %%) : %ld원, %.2lf %%", p_money->bond1.bond_name[i], p_money->bond1.bond_goal[i], p_money->bond1.bond_price[i], (double)p_money->bond1.bond_price[i]/p_money->all*100);
+        printf("\n%s(목표 %d %%) : %ld원, %.2lf %%\t    전체 대비 과부족액 : %lf원", p_money->bond1.bond_name[i], p_money->bond1.bond_goal[i], p_money->bond1.bond_price[i], (double)p_money->bond1.bond_price[i]/p_money->all*100, (double)p_money->all*p_money->bond1.bond_goal[i]/100-p_money->bond1.bond_price[i]);
     }
     printf("\n");
 }
