@@ -105,7 +105,18 @@ void rebal(money* p_money) {
     printf("주식(고정)대비 채권, 금의 필요량\n채권: %lf원\n금: %lf원\n", a - p_money->all_bond, b - p_money->gold);
 }
 void rebal2(money* p_money) {
-    double a = (double)p_money->all *0.3, b = (double)p_money->all * 0.1, c=(double)p_money->all *0.6;
+    int select, plus,all;
+    printf("\n시드를 새로 추가하시겠습니까? (1:네, 0:아니오) ");
+    scanf("%d", &select);
+    if (select == 1) {
+        printf("\n추가할 시드를 입력하시오.");
+        scanf("%d", &plus);
+        all = p_money->all + plus;
+    }
+    else{
+        all = p_money->all;
+    }
+    double a = (double)all *0.3, b = (double)all * 0.1, c=(double)all *0.6;
     printf("주식(60%%): %lf원\n채권: %lf원\n금: %lf원\n", c, a , b );
     printf("전체 자산 대비 과부족액\n주식(60%%): %lf원\n채권(30%%): %lf원\n금(10%%): %lf원\n", c-p_money->all_stock, a - p_money->all_bond, b - p_money->gold);
 }
