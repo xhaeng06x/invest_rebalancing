@@ -186,7 +186,21 @@ void f_load(money* p_money, int* pnum) {
     }
 
     fclose(fp);
+    int all_stock = 0; int all = 0; int all_bond=0;
+    for (int i = 0; i < MAX; i++) {
+        all_stock += p_money->stock1.stock_price[i];
+    }
+    for (int i = 0; i < MAX; i++) {
+        all_bond += p_money->bond1.bond_price[i];
+    }
+    all = all_stock + all_bond + p_money->gold;
     
+    if (p_money->all != all){
+        printf("\n자산에 변동이 생겨 업데이트 합니다.\n");
+        p_money->all = all;
+        p_money->all_stock = all_stock;
+        p_money->all_bond = all_bond;
+    }
     printf("\n불러오기 성공!\n");
     printf("주식 종목: %d개 로드됨\n", pnum[0]);
     printf("채권 종목: %d개 로드됨\n", pnum[1]);
