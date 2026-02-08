@@ -26,7 +26,7 @@ void rebal_stock(money* p_money, int *pnum);
 void rebal_bond(money*p_money, int *pnum);
 void f_save(money* p_money, int *pnum);
 void f_load(money* p_money, int* pnum);
-
+void show_chart(money* p_money, int* pnum);
 
 int main() {
     
@@ -39,7 +39,8 @@ int main() {
     while (1) {
         // 안내 메시지 추가 (선택 사항)
         
-        printf("1. 자산입력(초기화)\n2. 시뮬(주식대비 채권 금차이)\n3. 총 자산 기준 시뮬\n4. 개별주식비중보기\n5. 개별채권비중보기\n6. 저장\n7. 불러오기\n(그 외 종료)\n>>  ");
+        printf("\n1. 자산입력(초기화)\n2. 시뮬(주식대비 채권 금차이)\n3. 총 자산 기준 시뮬\n4. 개별주식비중보기\n5. 개별채권비중보기\n6. 저장\n7. 불러오기\n8. 원형 그래프 보기\n(그 외 종료)\n>>  ");
+        //printf("1. 자산입력(초기화)\n2. 시뮬(주식대비 채권 금차이)\n3. 총 자산 기준 시뮬\n4. 개별주식비중보기\n5. 개별채권비중보기\n6. 저장\n7. 불러오기\n(그 외 종료)\n>>  ");
         scanf("%d", &n);
         switch (n) {
         case 1:
@@ -51,6 +52,7 @@ int main() {
         case 5: rebal_bond(p_money, pnum);break;
         case 6: f_save(p_money, pnum); break;
         case 7: f_load(p_money, pnum); break;
+        case 8: show_chart(p_money, pnum); break;
         default:
             return 0; // 1이 아니면 종료하도록 처리
         }
@@ -220,4 +222,96 @@ void f_load(money* p_money, int* pnum) {
         printf("현재 상태 -> 주식 : %ld원, 채권 : %ld원, 금 : %ld원\n", p_money->all_stock, p_money->all_bond, p_money->gold);
         printf("\n현재 비중 -> 주식 : %.2lf %%, 채권 : %.2lf %%, 금 : %.2lf %%\n", (double)p_money->all_stock/p_money->all*100, (double)p_money->all_bond/p_money->all*100, (double)p_money->gold/p_money->all*100);
     }
+}
+void show_chart(money* p_money, int* pnum) {
+    if (p_money->all <= 0) {
+        printf("데이터가 없어 그래프를 표시할 수 없습니다.\n");
+        return;
+    }
+    FILE* fp = fopen("draw_chart.py", "w");
+    if (fp == NULL) return;
+    
+    fprintf(fp, "import matplotlib.pyplot as plt\n");
+    fprintf(fp, "import numpy as np\n");
+    
+    // 데이터 준비
+    fprintf(fp, "group_names = ['Stock', 'Bond', 'Gold']\n");
+    fprintf(fp, "group_size = [%ld, %ld, %ld]\n", p_money->all_stock, p_money->all_bond, p_money->gold);
+    
+    fprintf(fp, "subgroup_names = [");
+    // 주식 이름
+    for (int i = 0; i < pnum[0]; i++) fprintf(fp, "'%s', ", p_money->stock1.stock_name[i]);
+    // 채권 이름
+    for (int i = 0; i < pnum[1]; i++) fprintf(fp, "'%s', ", p_money->bond1.bond_name[i]);
+    // 금 이름
+    fprintf(fp, "'Gold']\n");
+    
+    fprintf(fp, "subgroup_size = [");
+    // 주식 가격
+    for (int i = 0; i < pnum[0]; i++) fprintf(fp, "%ld, ", p_money->stock1.stock_price[i]);
+    // 채권 가격
+    for (int i = 0; i < pnum[1]; i++) fprintf(fp, "%ld, ", p_money->bond1.bond_price[i]);
+    // 금 가격
+    fprintf(fp, "%ld]\n", p_money->gold);
+    
+    // 색상 설정 (Nested Pie Chart)
+    fprintf(fp, "a, b, c = [plt.cm.Reds, plt.cm.Blues, plt.cm.YlOrBr]\n");
+    
+    // Outer Ring Colors
+    fprintf(fp, "outer_colors = []\n");
+    if (pnum[0] > 0) fprintf(fp, "outer_colors += [a(x) for x in np.linspace(0.3, 0.9, %d)]\n", pnum[0]);
+    if (pnum[1] > 0) fprintf(fp, "outer_colors += [b(x) for x in np.linspace(0.3, 0.9, %d)]\n", pnum[1]);
+    fprintf(fp, "outer_colors += [c(0.6)]\n"); // Gold color
+    
+    // Inner Ring Colors
+    fprintf(fp, "inner_colors = [a(0.6), b(0.6), c(0.6)]\n");
+    
+    fprintf(fp, "fig, ax = plt.subplots(figsize=(14, 10))\n");
+    fprintf(fp, "ax.axis('equal')\n");
+    
+    // Inner Ring
+    fprintf(fp, "mypie, _ = ax.pie(group_size, radius=1.0, labels=group_names, labeldistance=0.6, colors=inner_colors, textprops={'fontsize': 12}, wedgeprops=dict(width=0.4, edgecolor='white'))\n");
+
+    // Outer Ring: 라벨을 직접 배치하기 위해 labels=None으로 설정
+    fprintf(fp, "mypie2, _ = ax.pie(subgroup_size, radius=1.4, labels=None, colors=outer_colors, wedgeprops=dict(width=0.4, edgecolor='white'))\n");
+    
+    // [개선] 라벨 겹침 방지를 위한 지그재그 배치 (Staggered Labels)
+    fprintf(fp, "for i, w in enumerate(mypie2):\n");
+    fprintf(fp, "    ang = (w.theta2 - w.theta1)/2. + w.theta1\n");
+    fprintf(fp, "    rad = 1.35 if i %% 2 == 0 else 1.55\n"); // 반지름을 번갈아가며 설정
+    fprintf(fp, "    x = rad * np.cos(np.deg2rad(ang))\n");
+    fprintf(fp, "    y = rad * np.sin(np.deg2rad(ang))\n");
+    // [개선] 폰트 크기 확대
+    fprintf(fp, "    font_size = 12 if subgroup_size[i]/sum(subgroup_size) > 0.02 else 10\n");
+    fprintf(fp, "    ax.text(x, y, subgroup_names[i], ha='center', va='center', fontsize=font_size, fontweight='bold')\n");
+
+    fprintf(fp, "plt.title('Asset Allocation Breakdown', pad=20, fontsize=16)\n");
+    
+    // Add text box with details
+    fprintf(fp, "textstr = ''\n");
+    fprintf(fp, "total = sum(group_size)\n");
+    fprintf(fp, "textstr += f'Total: {total:,} won\\n\\n'\n");
+    fprintf(fp, "textstr += f'Stock: {group_size[0]/total*100:.1f}%%\\n'\n");
+    // Add individual stocks
+    for (int i = 0; i < pnum[0]; i++) {
+         fprintf(fp, "textstr += f'  - %s: {subgroup_size[%d]/total*100:.1f}%%\\n'\n", p_money->stock1.stock_name[i], i);
+    }
+    
+    fprintf(fp, "textstr += f'Bond: {group_size[1]/total*100:.1f}%%\\n'\n");
+    // Add individual bonds
+    for (int i = 0; i < pnum[1]; i++) {
+        fprintf(fp, "textstr += f'  - %s: {subgroup_size[%d]/total*100:.1f}%%\\n'\n", p_money->bond1.bond_name[i], pnum[0] + i);
+    }
+    
+    fprintf(fp, "textstr += f'Gold: {group_size[2]/total*100:.1f}%%\\n'\n");
+    
+    fprintf(fp, "plt.gcf().text(0.02, 0.5, textstr, fontsize=12, bbox=dict(facecolor='white', alpha=0.5))\n");
+    fprintf(fp, "plt.subplots_adjust(left=0.3)\n"); // Make room for text
+    
+    fprintf(fp, "plt.savefig('chart.png')\n");
+    fclose(fp);
+
+    printf("그래프를 생성 중입니다...\n");
+    system("python3 draw_chart.py");
+    printf("그래프를 생성했습니다.\n");
 }
