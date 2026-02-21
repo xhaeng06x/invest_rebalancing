@@ -44,7 +44,7 @@ print(balance.account_number)
 print(repr(balance.stocks))
 print(balance.amount)
 print(balance.current_amount)
-#print(repr(balance1))
+print(repr(balance1))
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):

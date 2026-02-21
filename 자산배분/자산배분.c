@@ -1,6 +1,5 @@
 // #include <Python.h>
 
-#include "cJSON.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,12 +9,12 @@
 // [오류 수정 1] 구조체 정의를 함수 원형보다 위로 올렸습니다.
 typedef struct {
   long int stock_price[MAX];
-  char stock_name[MAX][40];
+  char stock_name[MAX][100];
   int stock_goal[MAX];
 } stock;
 typedef struct {
   long int bond_price[MAX];
-  char bond_name[MAX][40];
+  char bond_name[MAX][100];
   int bond_goal[MAX];
 } bond;
 typedef struct {
@@ -195,7 +194,7 @@ void f_save(money *p_money, int *pnum) {
     return;
   }
   // 1. 헤더
-  fprintf(fp, "총자산\t전체주식\t채권\t금\t예수금\n");
+  fprintf(fp, "총자산\t전체주식\t채권\t금\t추가할seed\n");
   // 2. 자산 데이터
   fprintf(fp, "%ld\t%ld\t%ld\t%ld\t%ld\n", p_money->all, p_money->all_stock,
           p_money->all_bond, p_money->gold, p_money->cash);
@@ -407,45 +406,6 @@ void show_chart(money *p_money, int *pnum) {
 }
 
 void pyapi(money *p_money, int *pnum) {
-  printf("파이썬 API를 실행합니다...\n");
-  // .venv의 python을 사용하도록 변경
-  system("../.venv/bin/python apiopen.py");
-  FILE *fp = fopen("data.json", "r");
-  if (fp == NULL) {
-    printf("파일을 열 수 없습니다.\n");
-    return;
-  }
-
-  // 2. 파일 크기 확인 및 전체 내용을 읽을 버퍼 준비
-  fseek(fp, 0, SEEK_END);
-  long file_size = ftell(fp);
-  fseek(fp, 0, SEEK_SET);
-
-  char *json_buffer = (char *)malloc(file_size + 1);
-  fread(json_buffer, 1, file_size, fp);
-  json_buffer[file_size] = '\0'; // 문자열 끝에 널 문자 추가
-  fclose(fp);
-  cJSON *json = cJSON_Parse(json_buffer);
-
-  // 파싱에 실패했을 경우 안전하게 종료
-  if (json == NULL) {
-    printf("JSON 파싱 에러 발생!\n");
-    free(json_buffer); // 에러가 나도 메모리는 돌려줘야 합니다.
-    return;
-  }
-  double amount = 0.0;
-  char stocks[20];
-  cJSON *price = cJSON_GetObjectItemCaseSensitive(json, "amount");
-  if (cJSON_IsNumber(price)) {
-    amount = price->valuedouble;
-  }
-  cJSON *stocks1 = cJSON_GetObjectItemCaseSensitive(json, "ticker");
-  if (cJSON_IsString(stocks1) && (stocks1->valuestring != NULL)) {
-    strcpy(stocks, stocks1->valuestring);
-  }
-  cJSON_Delete(json); // 파싱된 JSON 객체 삭제
-  free(json_buffer);  // 파일을 읽어왔던 임시 버퍼 삭제
-  printf("%lf\n", amount);
-  printf("%s", stocks);
-  // 파일은 다 읽었으니 닫아줍니다.
+  printf("이 기능은 준비중입니다..\n");
+  return;
 }

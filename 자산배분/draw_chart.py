@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 group_names = ['Stock', 'Bond', 'Gold']
-group_size = [804242, 181852, 132840]
-subgroup_names = ['TIGERs&p500', 'QQQM', 'koreatop10', 'ACEUSA10years', 'SGOV', 'Gold']
-subgroup_size = [652080, 123572, 28590, 31620, 150232, 132840]
+group_size = [883858, 446841, 130540]
+subgroup_names = ['S&P500', 'QQQM', 'KTOP10', 'USA10Y', 'SGOV', 'Gold']
+subgroup_size = [593280, 230463, 60115, 299740, 147101, 130540]
 a, b, c = [plt.cm.Reds, plt.cm.Blues, plt.cm.YlOrBr]
 outer_colors = []
 outer_colors += [a(x) for x in np.linspace(0.3, 0.9, 3)]
@@ -26,11 +26,11 @@ textstr = ''
 total = sum(group_size)
 textstr += f'Total: {total:,} won\n\n'
 textstr += f'Stock: {group_size[0]/total*100:.1f}%\n'
-textstr += f'  - TIGERs&p500: {subgroup_size[0]/total*100:.1f}%\n'
+textstr += f'  - S&P500: {subgroup_size[0]/total*100:.1f}%\n'
 textstr += f'  - QQQM: {subgroup_size[1]/total*100:.1f}%\n'
-textstr += f'  - koreatop10: {subgroup_size[2]/total*100:.1f}%\n'
+textstr += f'  - KTOP10: {subgroup_size[2]/total*100:.1f}%\n'
 textstr += f'Bond: {group_size[1]/total*100:.1f}%\n'
-textstr += f'  - ACEUSA10years: {subgroup_size[3]/total*100:.1f}%\n'
+textstr += f'  - USA10Y: {subgroup_size[3]/total*100:.1f}%\n'
 textstr += f'  - SGOV: {subgroup_size[4]/total*100:.1f}%\n'
 textstr += f'Gold: {group_size[2]/total*100:.1f}%\n'
 plt.gcf().text(0.02, 0.5, textstr, fontsize=12, bbox=dict(facecolor='white', alpha=0.5))
